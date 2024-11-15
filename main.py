@@ -1,25 +1,25 @@
 import streamlit as st
-import cv2
-import torch
+from ultralytics import YOLO
 from PIL import Image
 import numpy as np
+from cv2 import VideoCapture, cvtColor, COLOR_BGR2RGB,cv2
 
-# Load YOLOv8 Nano model (yolov8n) from the ultralytics repository
+# Load YOLOv8 Nano model (yolov8n) using the ultralytics package
 @st.cache_resource
 def load_model():
     # Load the YOLOv8 nano model using the ultralytics package
-    model = torch.hub.load('ultralytics/yolov8', 'yolov8n')  # yolov8n is the nano version of YOLOv8
+    model = YOLO('yolov8n.pt')  # You can specify a local model path or a URL
     return model
 
 # Set up webcam capture
 def capture_video():
-    cap = cv2.VideoCapture(0)  # Use default webcam (change index if necessary)
+    cap = VideoCapture(0)  # Use default webcam (change index if necessary)
     return cap
 
 # Run object detection on the frame
 def detect_objects(frame, model):
     # Convert the frame from BGR (OpenCV format) to RGB (YOLO model expects RGB input)
-    img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    img_rgb = cvtColor(frame, COLOR_BGR2RGB)
     
     # Perform inference using YOLOv8 model
     results = model(img_rgb)  # Detect objects in the image
